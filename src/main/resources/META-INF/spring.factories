@@ -1,0 +1,3 @@
+#Configuration classes
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.lrcortizo.document.manager.configuration.DocumentManagerAutoConfiguration
