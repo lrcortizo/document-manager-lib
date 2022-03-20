@@ -26,13 +26,8 @@ public class DocumentManagerService {
 
     public byte[] reduceDocumentSize(final byte[] document, final DocumentType documentType,
                                      final int maxDocumentMbSize, final int maxImagePixelsSize) throws DocumentManagerException {
-        try {
-            return this.documentProcessorResolver
-                    .resolve(documentType.getProcessorServiceClass())
-                    .reduceSize(document, MB_SIZE * maxDocumentMbSize, maxImagePixelsSize);
-        } catch (final IllegalArgumentException e) {
-            throw new DocumentManagerException(String.format("Document processor service not found for type %s",
-                    documentType.name()));
-        }
+        return this.documentProcessorResolver
+                .resolve(documentType.getProcessorServiceClass())
+                .reduceSize(document, MB_SIZE * maxDocumentMbSize, maxImagePixelsSize);
     }
 }
