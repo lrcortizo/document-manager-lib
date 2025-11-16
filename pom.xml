@@ -5,16 +5,22 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.6.4</version>
+        <version>3.2.5</version>
         <relativePath/>
     </parent>
 
     <groupId>com.lrcortizo.document.manager</groupId>
     <artifactId>document-manager</artifactId>
-    <version>1.0.0</version>
+    <version>2.0.0</version>
+    <packaging>pom</packaging>
 
     <name>document-manager-lib</name>
     <description>Document manager library</description>
+
+    <modules>
+        <module>document-toolkit</module>
+        <module>excel-mapper</module>
+    </modules>
 
     <scm>
         <developerConnection>scm:git:https://github.com/lrcortizo/document-manager-lib
@@ -25,8 +31,8 @@
     </scm>
 
     <properties>
-        <java.version>17</java.version>
-        <itextpdf.version>5.5.13.3</itextpdf.version>
+        <java.version>21</java.version>
+        <lombok.version>1.18.34</lombok.version>
     </properties>
 
     <dependencies>
@@ -42,21 +48,26 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>com.itextpdf</groupId>
-            <artifactId>itextpdf</artifactId>
-            <version>${itextpdf.version}</version>
+            <version>${lombok.version}</version>
         </dependency>
     </dependencies>
 
     <build>
         <plugins>
             <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
             </plugin>
         </plugins>
     </build>
+
 </project>
