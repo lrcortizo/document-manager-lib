@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -75,14 +76,16 @@ public class SheetMapper {
         return Arrays.stream(cls.getDeclaredFields())
                 .map(field -> processSheetField(objectMapper, flatData, field))
                 .flatMap(map -> map.entrySet().stream())
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                .collect(HashMap::new,
+                        (map, entry) -> map.put(entry.getKey(), entry.getValue()),
+                        HashMap::putAll);
     }
 
     private Map<String, Object> processSheetField(final ObjectMapper objectMapper,
                                                   final Map<String, Object> flatData,
                                                   final Field field) {
         return Optional.ofNullable(field.getAnnotation(CellData.class))
-                .map(cellData -> Map.of(field.getName(), flatData.get(cellData.name())))
+                .map(cellData -> createSingleEntryMap(field.getName(), flatData.get(cellData.name())))
                 .orElseGet(() -> buildNestedField(objectMapper, flatData, field));
     }
 
@@ -91,7 +94,7 @@ public class SheetMapper {
                                                  final Field field) {
         return SheetDTO.class.isAssignableFrom(field.getType())
                 ? buildNestedFieldMap(objectMapper, flatData, field)
-                : Map.of();
+                : new HashMap<>();
     }
 
     private Map<String, Object> buildNestedFieldMap(final ObjectMapper objectMapper,
@@ -100,6 +103,12 @@ public class SheetMapper {
         final Map<String, Object> nestedData = buildNestedStructure(
                 objectMapper, flatData, (Class<? extends SheetDTO>) field.getType());
         final Object nestedObject = objectMapper.convertValue(nestedData, field.getType());
-        return Map.of(field.getName(), nestedObject);
+        return createSingleEntryMap(field.getName(), nestedObject);
+    }
+
+    private Map<String, Object> createSingleEntryMap(final String key, final Object value) {
+        final Map<String, Object> map = new HashMap<>();
+        map.put(key, value);
+        return map;
     }
 }
